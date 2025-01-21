@@ -10,13 +10,13 @@ import shutil
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-# Database connection
 def get_db_connection():
     return psycopg2.connect(
-        host="db",
-        database="coding_platform",
+        dbname="coding_platform",
         user="postgres",
-        password="postgres"
+        password="postgres",
+        host="localhost",  # Change from 'db' to 'localhost'
+        port=5432  # Default PostgreSQL port
     )
 
 @app.route("/")

@@ -84,7 +84,7 @@ def upload(task_id):
                 result = test_result.stderr
             else:
                 result = subprocess.run(
-                    ["./test_task.sh", str(task_id), "submission.out"],
+                    ["python3", "test_runner.py", str(task_id), "submission.out"],
                     capture_output=True,
                     text=True
                 ).stdout

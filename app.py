@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import os
 import subprocess
 from datetime import datetime
-import psycopg2
+import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import tempfile
 import shutil
@@ -10,21 +10,18 @@ import shutil
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
+# SQLite database connection
 def get_db_connection():
-    return psycopg2.connect(
-        dbname="coding_platform",
-        user="postgres",
-        password="postgres",
-        host="localhost",  # Change from 'db' to 'localhost'
-        port=5432  # Default PostgreSQL port
-    )
+    conn = sqlite3.connect("coding_platform.db")  # SQLite database file
+    conn.row_factory = sqlite3.Row  # To fetch rows as dictionaries
+    return conn
 
 @app.route("/")
 def index():
     if "user_id" in session:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, title, end_date FROM tasks WHERE end_date > NOW() ORDER BY end_date")
+        cur.execute("SELECT id, title, end_date FROM tasks WHERE end_date > ? ORDER BY end_date", (datetime.now(),))
         tasks = cur.fetchall()
         cur.close()
         conn.close()
@@ -38,11 +35,11 @@ def login():
         password = request.form["password"]
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, password FROM users WHERE username = %s", (username,))
+        cur.execute("SELECT id, password FROM users WHERE username = ?", (username,))
         user = cur.fetchone()
         cur.close()
         conn.close()
-        if user and check_password_hash(user[1], password):
+        if user and check_password_hash(generate_password_hash(user[1]), password):
             session["user_id"] = user[0]
             return redirect(url_for("index"))
         flash("Invalid credentials")
@@ -60,12 +57,12 @@ def upload(task_id):
 
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, title, end_date FROM tasks WHERE id = %s", (task_id,))
+    cur.execute("SELECT id, title, end_date FROM tasks WHERE id = ?", (task_id,))
     task = cur.fetchone()
     cur.close()
     conn.close()
 
-    if not task or task[2] < datetime.now():
+    if not task or datetime.fromisoformat(task["end_date"]) < datetime.now():
         flash("Task is closed for submissions.")
         return redirect(url_for("index"))
 
@@ -96,7 +93,7 @@ def upload(task_id):
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute(
-                "INSERT INTO results (user_id, task_id, result) VALUES (%s, %s, %s)",
+                "INSERT INTO results (user_id, task_id, result) VALUES (?, ?, ?)",
                 (session["user_id"], task_id, result)
             )
             conn.commit()
@@ -118,7 +115,7 @@ def results():
         SELECT tasks.title, results.result
         FROM results
         INNER JOIN tasks ON results.task_id = tasks.id
-        WHERE results.user_id = %s
+        WHERE results.user_id = ?
     """, (session["user_id"],))
     results = cur.fetchall()
     cur.close()

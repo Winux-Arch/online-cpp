@@ -40,7 +40,7 @@ def login():
         user = cur.fetchone()
         cur.close()
         conn.close()
-        if user and check_password_hash(generate_password_hash(user[1]), password):
+        if user and check_password_hash((user[1]), password):
             session["user_id"] = user[0]
             return redirect(url_for("index"))
         result="Invalid credentials"

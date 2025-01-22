@@ -73,21 +73,11 @@ def upload(task_id):
             filepath = os.path.join("submissions", filename)
             file.save(filepath)
 
-            # Compile and test code
-            test_result = subprocess.run(
-                ["g++", filepath, "-o", "submission.out"],
+            result = subprocess.run(
+                ["python3", "test_runner.py", str(task_id), filename],
                 capture_output=True,
                 text=True
-            )
-
-            if test_result.returncode != 0:
-                result = test_result.stderr
-            else:
-                result = subprocess.run(
-                    ["python3", "test_runner.py", str(task_id), "submission.out"],
-                    capture_output=True,
-                    text=True
-                ).stdout
+            ).stdout
 
             # Save result in the database
             conn = get_db_connection()

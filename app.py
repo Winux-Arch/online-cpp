@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import subprocess
 from datetime import datetime
@@ -30,6 +30,7 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    result=None
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -42,8 +43,8 @@ def login():
         if user and check_password_hash(generate_password_hash(user[1]), password):
             session["user_id"] = user[0]
             return redirect(url_for("index"))
-        flash("Invalid credentials")
-    return render_template("login.html")
+        result="Invalid credentials"
+    return render_template("login.html",result=result)
 
 @app.route("/logout")
 def logout():
@@ -63,8 +64,7 @@ def upload(task_id):
     conn.close()
 
     if not task or datetime.fromisoformat(task["end_date"]) < datetime.now():
-        flash("Task is closed for submissions.")
-        return redirect(url_for("index"))
+        task = ("Task is closed for submissions.")
 
     if request.method == "POST":
         file = request.files["code"]
@@ -99,8 +99,7 @@ def upload(task_id):
             conn.commit()
             cur.close()
             conn.close()
-            flash("Submission processed.")
-        return redirect(url_for("index"))
+            task="Submission processed."
 
     return render_template("upload.html", task=task)
 

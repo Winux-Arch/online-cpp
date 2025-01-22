@@ -8,7 +8,7 @@ import tempfile
 import shutil
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = "e9b2b4af6f0ffd5e40b70b36316ea24b8db071d3f4650f08906ea9a23039b8ee"
 
 # SQLite database connection
 def get_db_connection():

@@ -35,3 +35,16 @@ if __name__ == "__main__":
     task_id = sys.argv[1]
     executable = sys.argv[2]
     print(run_test(task_id, executable))
+
+'''
+# Compile and test code
+            test_result = subprocess.run(
+                ["g++", filepath, "-o", "submission.out"],
+                capture_output=True,
+                text=True
+            )
+
+            if test_result.returncode != 0:
+                result = test_result.stderr
+            else:
+'''

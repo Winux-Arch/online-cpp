@@ -103,7 +103,7 @@ def results():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT tasks.title, results.result
+        SELECT tasks.title, results.result, results.result_points
         FROM results
         INNER JOIN tasks ON results.task_id = tasks.id
         WHERE results.user_id = ?

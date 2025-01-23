@@ -19,6 +19,7 @@ CREATE TABLE results (
     user_id INTEGER,
     task_id INTEGER,
     result TEXT NOT NULL,
+    result_points INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (task_id) REFERENCES tasks(id)
 );

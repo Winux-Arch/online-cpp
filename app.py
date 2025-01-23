@@ -21,7 +21,7 @@ def index():
     if "user_id" in session:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, title, end_date FROM tasks WHERE end_date > ? ORDER BY end_date", (datetime.now(),))
+        cur.execute("SELECT id, title, end_date, assignment FROM tasks WHERE end_date > ? ORDER BY end_date", (datetime.now(),))
         tasks = cur.fetchall()
         cur.close()
         conn.close()

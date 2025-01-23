@@ -3,6 +3,9 @@
 {% block title %}Submit Solution{% endblock %}
 
 {% block content %}
+{% if res %}
+<h1>Task is over or not available.</h1>
+{% else %}
 <h1>Submit Solution for "{{ task[1] }}"</h1>
 <form method="POST" enctype="multipart/form-data">
     <div class="mb-3">
@@ -11,4 +14,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+{% endif %}
 {% endblock %}

@@ -55,6 +55,8 @@ def logout():
 def upload(task_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+    
+    res = False
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -64,7 +66,7 @@ def upload(task_id):
     conn.close()
 
     if not task or datetime.fromisoformat(task["end_date"]) < datetime.now():
-        task = ("Task is closed for submissions.")
+        res = True
 
     if request.method == "POST":
         file = request.files["code"]
@@ -89,9 +91,9 @@ def upload(task_id):
             conn.commit()
             cur.close()
             conn.close()
-            task="Submission processed."
+            return redirect(url_for("results"))
 
-    return render_template("upload.html", task=task)
+    return render_template("upload.html", task=task,res=res)
 
 @app.route("/results")
 def results():

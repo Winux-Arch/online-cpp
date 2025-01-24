@@ -9,7 +9,8 @@ CREATE TABLE users (
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
-    end_date TEXT NOT NULL
+    end_date TEXT NOT NULL,
+    assignment TEXT NOT NULL
 );
 
 -- Create results table
@@ -18,6 +19,7 @@ CREATE TABLE results (
     user_id INTEGER,
     task_id INTEGER,
     result TEXT NOT NULL,
+    result_points INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (task_id) REFERENCES tasks(id)
 );
@@ -27,5 +29,6 @@ INSERT INTO users (username, password)
 VALUES ('testuser', 'scrypt:32768:8:1$5SjL8gqRuClrPRo8$0a02edff67dd343e8a5225d9c427e803a0e10a556d5523fb43f2bfe4fc3734307ca9dc237d7a2c89a29ca312aa448b2f7371bbcfaa904158240304c159dd90a8');
 
 -- Insert a test task
-INSERT INTO tasks (title, end_date)
-VALUES ('Example Task', datetime('now', '+7 days'));
+INSERT INTO tasks (title, end_date, assignment)
+VALUES ('Example Task', datetime('now', '+7 days'),'Write a programm in one cpp file which outputs "Hello World!".'),
+       ('Example Task 2', datetime('now', '+7 days'),'Write a programm in one cpp file which takes two inputs and outputs their sum.');

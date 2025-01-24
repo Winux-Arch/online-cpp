@@ -8,6 +8,7 @@
     {% for task in tasks %}
     <li class="list-group-item bg-dark text-light">
         <h5>{{ task[1] }}</h5>
+        <p>{{ task[3] }}</p>
         <p>Ends at: {{ task[2] }}</p>
         <a href="{{ url_for('upload', task_id=task[0]) }}" class="btn btn-primary">Submit Solution</a>
     </li>
